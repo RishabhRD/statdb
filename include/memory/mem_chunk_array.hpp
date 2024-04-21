@@ -1,55 +1,58 @@
 #pragma once
 
-#include <algorithm>
+#include <array>
 #include <cstddef>
-#include <span>
+#include <vector>
 
 namespace statdb {
 template <std::size_t chunk_size>
   requires(chunk_size > 0)
 class mem_chunk_array {
-  std::byte *data_;
-  std::size_t size_;
+  using data_t = std::vector<std::array<std::byte, chunk_size>>;
+  data_t data_;
 
 public:
+  using value_type = typename data_t::value_type;
+  using size_type = typename data_t::size_type;
+  using difference_type = typename data_t::difference_type;
+  using reference = typename data_t::reference;
+  using const_reference = typename data_t::const_reference;
+  using pointer = typename data_t::pointer;
+  using const_pointer = typename data_t::const_pointer;
+  using iterator = typename data_t::iterator;
+  using const_iterator = typename data_t::const_iterator;
+  using reverse_iterator = typename data_t::reverse_iterator;
+  using const_reverse_iterator = typename data_t::const_reverse_iterator;
+
   // Precondition:
   //   - size > 0
-  mem_chunk_array(std::size_t size)
-      : data_(new std::byte[size * chunk_size]), size_(size) {}
+  mem_chunk_array(std::size_t size) : data_(size) {}
 
-  mem_chunk_array(mem_chunk_array const &other)
-      : data_(new std::byte[other.size_ * chunk_size]), size_(other.size_) {
-    std::copy(other.data_, other.data_ + (size_ * chunk_size), data_);
-  }
-
-  mem_chunk_array(mem_chunk_array &&other) noexcept
-      : data_(other.data_), size_(other.size_) {
-    other.data_ = nullptr;
-  }
-
-  auto operator=(mem_chunk_array other) -> mem_chunk_array & {
-    swap(*this, other);
-    return *this;
-  }
-
-  friend void swap(mem_chunk_array &first, mem_chunk_array &second) noexcept {
-    using std::swap;
-    swap(first.data_, second.data_);
+  // Precondition:
+  //   - i < size
+  auto operator[](std::size_t i) const noexcept -> const_reference {
+    return data_[i];
   }
 
   // Precondition:
   //   - i < size
-  auto operator[](std::size_t i) const noexcept {
-    return std::span<std::byte const, chunk_size>{data_ + (i * chunk_size),
-                                                  chunk_size};
-  }
+  auto operator[](std::size_t i) noexcept -> reference { return data_[i]; }
 
-  // Precondition:
-  //   - i < size
-  auto operator[](std::size_t i) noexcept {
-    return std::span<std::byte, chunk_size>{data_ + (i * chunk_size),
-                                            chunk_size};
-  }
+  auto begin() noexcept { return std::begin(data_); }
+  auto begin() const noexcept { return std::begin(data_); }
+  auto cbegin() const noexcept { return std::begin(data_); }
+
+  auto end() noexcept { return std::end(data_); }
+  auto end() const noexcept { return std::end(data_); }
+  auto cend() const noexcept { return std::end(data_); }
+
+  auto rbegin() noexcept { return std::rbegin(data_); }
+  auto rbegin() const noexcept { return std::rbegin(data_); }
+  auto crbegin() const noexcept { return std::crbegin(data_); }
+
+  auto rend() noexcept { return std::rend(data_); }
+  auto rend() const noexcept { return std::rend(data_); }
+  auto crend() const noexcept { return std::crend(data_); }
 
   ~mem_chunk_array() noexcept { delete[] data_; }
 };
