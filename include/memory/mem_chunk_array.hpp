@@ -39,14 +39,16 @@ public:
 
   // Precondition:
   //   - i < size
-  auto operator[](std::size_t i) const noexcept -> std::span<std::byte const> {
-    return {data_ + (i * chunk_size), chunk_size};
+  auto operator[](std::size_t i) const noexcept {
+    return std::span<std::byte const, chunk_size>{data_ + (i * chunk_size),
+                                                  chunk_size};
   }
 
   // Precondition:
   //   - i < size
-  auto operator[](std::size_t i) noexcept -> std::span<std::byte> {
-    return {data_ + (i * chunk_size), chunk_size};
+  auto operator[](std::size_t i) noexcept {
+    return std::span<std::byte, chunk_size>{data_ + (i * chunk_size),
+                                            chunk_size};
   }
 
   ~mem_chunk_array() noexcept { delete[] data_; }
