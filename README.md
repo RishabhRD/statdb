@@ -1,2 +1,2 @@
 # statdb
-OLAP database with static tabes
+OLAP database with static tables
