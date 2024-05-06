@@ -1,7 +1,7 @@
 #pragma once
 
 namespace statdb {
-struct page_id_t {
-  friend bool operator==(page_id_t const &, page_id_t const &) = default;
+struct page_id {
+  friend bool operator==(page_id const &, page_id const &) = default;
 };
 } // namespace statdb
