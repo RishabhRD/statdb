@@ -9,7 +9,7 @@ It would support 2 operations:
 1. acquire page
 2. release page
 
-This is assumed that acquire page and release page would **not** be called from
+This is assumed that acquire page and release page would **NOT** be called from
 different threads.
 
 ## Kinds of Pages
