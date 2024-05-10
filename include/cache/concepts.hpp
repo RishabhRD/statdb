@@ -4,7 +4,7 @@
 namespace statdb {
 // Constructor should construct the cache of size k.
 template <typename CacheType>
-concept cache =
+concept Cache =
     std::constructible_from<CacheType, std::size_t> &&
     requires(CacheType cache, CacheType const &constCache, std::size_t e) {
       // Precondition: e belongs to [0, k)
