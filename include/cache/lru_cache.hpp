@@ -53,8 +53,12 @@ public:
     return e;
   }
 
+  // Precondition:
+  //   - e would range from [0, cache_size)
   auto contains(value_type const &e) const noexcept -> bool {
     return element_pointers[e] != std::end(cached_elements);
   }
+
+  auto capacity() const noexcept { return element_pointers.size(); }
 };
 } // namespace statdb

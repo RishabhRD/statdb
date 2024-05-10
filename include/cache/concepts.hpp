@@ -9,11 +9,13 @@ concept cache =
     requires(CacheType cache, CacheType const &constCache, std::size_t e) {
       // Precondition: e belongs to [0, k)
       { cache.add(e) } -> std::same_as<void>;
-      // Precondition: e belongs to [0, k)
+      // Precondition: e belongs to [0, k) and e is in cache
       { cache.remove(e) } -> std::same_as<void>;
       { constCache.size() } -> std::same_as<std::size_t>;
       // Precondition: cache.size() > 0
       { cache.evict() } -> std::same_as<std::size_t>;
+      // Precondition: e belongs to [0, k)
       { cache.contains(e) } -> std::same_as<bool>;
+      { constCache.capacity() } -> std::same_as<std::size_t>;
     };
 } // namespace statdb
