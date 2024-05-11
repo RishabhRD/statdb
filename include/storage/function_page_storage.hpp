@@ -13,7 +13,7 @@ public:
   constexpr function_page_storage(ComputePage compute_page)
       : compute_page_(std::move(compute_page)) {}
 
-  auto fetch_page(page_id const &id, page &page) const -> exec::task<bool> {
+  auto fetch_page(page_id const &id, page &page) -> exec::task<bool> {
     // TODO: fix when stdexec fixes sender_of concept
     co_return compute_page_(id, page);
   }
