@@ -6,6 +6,7 @@
 #include "std/ranges.hpp"
 #include "storage/concepts.hpp"
 #include <algorithm>
+#include <optional>
 #include <stdexec/exec/task.hpp>
 #include <vector>
 
@@ -14,7 +15,7 @@ namespace statdb {
 template <Cache cache, PageStorage page_storage> class buffer_pool {
   cache eviction_cache;
   std::vector<page> page_frames;
-  std::vector<page_id> page_ids;
+  std::vector<std::optional<page_id>> page_ids;
   std::vector<std::size_t> acquire_cnt;
   page_storage storage_;
 
