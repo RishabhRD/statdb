@@ -4,17 +4,19 @@
 #include "page/page.hpp"
 #include "page/page_id.hpp"
 #include "std/ranges.hpp"
+#include "storage/concepts.hpp"
 #include <algorithm>
 #include <stdexec/exec/task.hpp>
 #include <vector>
 
 namespace statdb {
 
-template <Cache CacheType> class buffer_pool {
-  CacheType eviction_cache;
+template <Cache cache, PageStorage page_storage> class buffer_pool {
+  cache eviction_cache;
   std::vector<page> page_frames;
   std::vector<page_id> page_ids;
   std::vector<std::size_t> acquire_cnt;
+  page_storage storage_;
 
 public:
   // Class Invariants:
@@ -24,9 +26,9 @@ public:
   //     else
   //         -> true;
 
-  buffer_pool(std::size_t pool_size)
+  buffer_pool(std::size_t pool_size, page_storage storage)
       : eviction_cache(pool_size), page_frames(pool_size), page_ids(pool_size),
-        acquire_cnt(pool_size) {
+        acquire_cnt(pool_size), storage_(std::move(storage)) {
     for (std::size_t i{}; i < capacity(); ++i) {
       eviction_cache.add(i);
     }
@@ -76,18 +78,13 @@ private:
 
     auto page_idx = eviction_cache.peek();
     auto did_read_page =
-        co_await fetch_page_from_storage(id, page_frames[page_idx]);
+        co_await storage_.fetch_page(id, page_frames[page_idx]);
     if (!did_read_page) {
       co_return static_cast<page const *>(nullptr);
     }
     eviction_cache.evict();
     ++acquire_cnt[page_idx];
     co_return &page_frames[page_idx];
-  }
-
-  auto fetch_page_from_storage(page_id, page &) -> exec::task<bool> {
-    // TODO: Real implementation needed
-    co_return false;
   }
 };
 
