@@ -4,7 +4,7 @@
 #include "page/page_id.hpp"
 namespace statdb {
 struct incremental_page_generator {
-  unsigned char cur_val{};
+  unsigned char cur_val{1};
 
   auto operator()(page_id const &, page &page) -> bool {
     page[0] = std::byte(cur_val++);

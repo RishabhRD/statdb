@@ -58,9 +58,9 @@ public:
   // Postcondition:
   //   - decrement acquire[cnt] of index of page id by 1
   auto release(page_id id) {
-    auto const page_idx =
-        rng::distance(rng::begin(page_ids), rng::find(page_ids, id));
-    if (--acquire_cnt[page_idx]) {
+    auto const page_idx = static_cast<std::size_t>(
+        rng::distance(rng::begin(page_ids), rng::find(page_ids, id)));
+    if ((--acquire_cnt[page_idx]) == 0) {
       eviction_cache.add(page_idx);
     }
   }
@@ -85,6 +85,7 @@ private:
     }
     eviction_cache.evict();
     ++acquire_cnt[page_idx];
+    page_ids[page_idx] = std::move(id);
     co_return &page_frames[page_idx];
   }
 };
